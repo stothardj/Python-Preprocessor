@@ -10,6 +10,7 @@ Syntax:
 !include
 !undefine
 !ifdef
+!else
 !endif
 !include
 !import

@@ -29,6 +29,7 @@ syntax = {
     'udef' : 'undefine',
     'ifdef' : 'ifdef',
     'ifndef' : 'ifndef',
+    'else' : 'else',
     'endif' : 'endif',
     'include' : 'include',
     'import' : 'import'
@@ -68,6 +69,9 @@ def process_file(fname):
                     elif k == 'ifndef':
                         m = re.match(r'\s+(\S+)', line[l:])
                         ifstack.append( m.group(1) not in defs )
+                        printit = False
+                    elif k == 'else':
+                        ifstack[-1] = not ifstack[-1]
                         printit = False
                     elif k == 'endif':
                         ifstack.pop()
