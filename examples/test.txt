@@ -1,0 +1,13 @@
+!ifndef TEST_H
+!define TEST_H
+
+!include "otherfile.txt"
+!include "otherfile.txt"
+
+!import "meh.txt"
+!import "meh.txt"
+
+My code goes here
+la la la
+
+!endif

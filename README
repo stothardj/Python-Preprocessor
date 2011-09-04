@@ -1,0 +1,19 @@
+This is a general preprocessor written in python. It is not
+really intended to be used on python, since python doesn't
+really need it. This is just a bit of glue for my coffeescript, based
+on c preprocessor, but simple enough that it won't do anything
+it's not supposed to and not conflicting with # as comments
+
+Syntax:
+
+!define
+!include
+!undefine
+!ifdef
+!endif
+!include
+!import
+
+Note that right now this is just to handle easy including,
+so it doesn't do anythig with what you define things as. Feel
+free to do anything with this code.

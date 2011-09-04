@@ -1,0 +1,10 @@
+!ifndef OTHER
+!define OTHER
+
+This is the other file
+
+!define CAKE 12
+
+!endif
+
+Lol Omg
