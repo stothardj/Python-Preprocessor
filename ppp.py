@@ -35,10 +35,6 @@ syntax = {
     'import' : 'import'
 }
 
-#Tack on sig now
-for k, v in syntax.items():
-    syntax[k] = sig+v
-
 defs = {}
 # Are we in a case where we should print to stdout?
 ifstack = [True]
@@ -48,54 +44,57 @@ def process_file(fname):
     with open(fname, 'r') as f:
         for line in f:
             # Should I print this line as it is?
-            printit = ifstack[-1]
+            printit = all(ifstack)
 
-            for k, v in syntax.items():
-                l = len(v)
-                # Does it start with v?
-                if line[:l] == v:
-                    if k == 'def':
-                        m = re.match(r'\s+(\S+)\s*(\S*)', line[l:])
-                        defs[m.group(1)] = m.group(2)
-                        printit = False
-                    elif k == 'udef':
-                        m = re.match(r'\s+(\S+)', line[l:])
-                        del defs[m.group(1)]
-                        printit = False
-                    elif k == 'ifdef':
-                        m = re.match(r'\s+(\S+)', line[l:])
-                        ifstack.append( m.group(1) in defs )
-                        printit = False
-                    elif k == 'ifndef':
-                        m = re.match(r'\s+(\S+)', line[l:])
-                        ifstack.append( m.group(1) not in defs )
-                        printit = False
-                    elif k == 'else':
-                        ifstack[-1] = not ifstack[-1]
-                        printit = False
-                    elif k == 'endif':
-                        ifstack.pop()
-                        printit = False
-                    elif k == 'include':
-                        # TODO: use path. Pay attention to "" vs <>
-                        # This is the curdir of the file doing the including,
-                        # not the curdir of the ppp program
-                        curdir = os.path.split(fname)[0]
-                        loc = line[l:].strip()
-                        
-                        process_file( os.path.join(curdir, loc[1:-1]) )
-                        printit = False
-                    elif k == 'import':
-                        loc = line[l:].strip()
-                        # Yes I leave on the "" or <>, that way if it later
-                        # causes two different files to be included based
-                        # on whether the curdir is included then it won't collide
-                        key = import_prefix + loc
-                        if key not in defs:
-                            defs[key] = ''
-                            curdir = os.path.split(fname)[0]
-                            process_file( os.path.join(curdir, loc[1:-1]) )
-                        printit = False
+            if line[:len(sig)] == sig:
+              for k, v in syntax.items():
+                  # l = len(v)
+                  # Does it start with v?
+                  sel = re.match('\s*%s(.*)' % v, line[len(sig):])
+                  if sel:
+                      args = sel.group(1)
+                      if k == 'def':
+                          m = re.match(r'\s+(\S+)\s*(\S*)', args)
+                          defs[m.group(1)] = m.group(2)
+                          printit = False
+                      elif k == 'udef':
+                          m = re.match(r'\s+(\S+)', args)
+                          del defs[m.group(1)]
+                          printit = False
+                      elif k == 'ifdef':
+                          m = re.match(r'\s+(\S+)', args)
+                          ifstack.append( m.group(1) in defs )
+                          printit = False
+                      elif k == 'ifndef':
+                          m = re.match(r'\s+(\S+)', args)
+                          ifstack.append( m.group(1) not in defs )
+                          printit = False
+                      elif k == 'else':
+                          ifstack[-1] = not ifstack[-1]
+                          printit = False
+                      elif k == 'endif':
+                          ifstack.pop()
+                          printit = False
+                      elif k == 'include':
+                          # TODO: use path. Pay attention to "" vs <>
+                          # This is the curdir of the file doing the including,
+                          # not the curdir of the ppp program
+                          curdir = os.path.split(fname)[0]
+                          loc = args.strip()
+                          
+                          process_file( os.path.join(curdir, loc[1:-1]) )
+                          printit = False
+                      elif k == 'import':
+                          loc = args.strip()
+                          # Yes I leave on the "" or <>, that way if it later
+                          # causes two different files to be included based
+                          # on whether the curdir is included then it won't collide
+                          key = import_prefix + loc
+                          if key not in defs:
+                              defs[key] = ''
+                              curdir = os.path.split(fname)[0]
+                              process_file( os.path.join(curdir, loc[1:-1]) )
+                          printit = False
             if printit:
                 print (line, end='')
 

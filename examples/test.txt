@@ -12,17 +12,24 @@ I could have code with tons of debug messages here
 It would be annoying to switch between that
 and the next few lines every time we want to put
 a demo on the site
+
+!  ifdef CAKE
+This nested if should not have
+!  else
+either side shown
+!  endif
+
 !else
 So by not defining debug we would see this code
 instead. This could be useful.
-!ifdef CAKE
+!  ifdef CAKE
 This is a nested if. Cake should be defined by otherfile.txt
 so seeing this is correct
-!else
+!  else
 This message should not be shown
-!endif
+!  endif
 And we are back into the part which should be shown.
-!endif
+!  endif
 
 My code goes here
 la la la
