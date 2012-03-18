@@ -48,7 +48,6 @@ def process_file(fname):
 
             if line[:len(sig)] == sig:
               for k, v in syntax.items():
-                  # l = len(v)
                   # Does it start with v?
                   sel = re.match('\s*%s(.*)' % v, line[len(sig):])
                   if sel:
